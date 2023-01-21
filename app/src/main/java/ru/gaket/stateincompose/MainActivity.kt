@@ -12,6 +12,10 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -99,17 +103,17 @@ fun CounterScreen(name: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun PeopleCounter(modifier: Modifier = Modifier) {
-    var count = 0
+    val count: MutableState<Int> = rememberSaveable { mutableStateOf(0) }
     val context = LocalContext.current
     Column(
         modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "$count", fontSize = 60.sp)
-        Text(text = "people passed")
+        Text(text = "${count.value}", fontSize = 60.sp)
+        Text(text = "people passed by")
         Spacer(modifier = Modifier.height(40.dp))
         Button(onClick = {
-            Toast.makeText(context, "Counter clicked!", LENGTH_SHORT).show()
+            count.value = count.value + 1
         }) {
             Text("Click")
         }
