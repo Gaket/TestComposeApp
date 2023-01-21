@@ -4,6 +4,8 @@ package ru.gaket.stateincompose
 
 import android.os.Bundle
 import android.view.Display.Mode
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
@@ -12,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -75,7 +78,7 @@ sealed class Screen {
     class Counter(val name: String) : Screen() {
         @Composable
         override fun Composable() {
-            CounterScreen(name = "Counter")
+            CounterScreen(name = "artur@getsquire.com", modifier = Modifier.fillMaxSize())
         }
     }
 
@@ -84,9 +87,9 @@ sealed class Screen {
 
 @Composable
 fun CounterScreen(name: String, modifier: Modifier = Modifier) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = modifier) {
         Greeting(
-            name = "Android",
+            name = name,
             modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
         )
         Spacer(Modifier.height(40.dp))
@@ -95,8 +98,9 @@ fun CounterScreen(name: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun PeopleCounter( modifier: Modifier = Modifier) {
+fun PeopleCounter(modifier: Modifier = Modifier) {
     var count = 0
+    val context = LocalContext.current
     Column(
         modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -104,7 +108,9 @@ fun PeopleCounter( modifier: Modifier = Modifier) {
         Text(text = "$count", fontSize = 60.sp)
         Text(text = "people passed")
         Spacer(modifier = Modifier.height(40.dp))
-        Button(onClick = { }) {
+        Button(onClick = {
+            Toast.makeText(context, "Counter clicked!", LENGTH_SHORT).show()
+        }) {
             Text("Click")
         }
     }
