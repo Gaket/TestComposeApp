@@ -3,6 +3,7 @@
 package ru.gaket.stateincompose
 
 import android.os.Bundle
+import android.view.Display.Mode
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
@@ -13,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ru.gaket.stateincompose.ui.theme.StateInComposeTheme
 import java.util.Stack
 
@@ -25,7 +27,7 @@ class MainActivity : ComponentActivity() {
         navigateTo(
             Screen.Login {
                 navigateTo(
-                    Screen.Counter("Droid 2")
+                    Screen.Counter("Anonymous")
                 )
             }
         )
@@ -82,7 +84,30 @@ sealed class Screen {
 
 @Composable
 fun CounterScreen(name: String, modifier: Modifier = Modifier) {
-    Text(text = "Help $name!", modifier = modifier)
+    Column(modifier = Modifier.fillMaxSize()) {
+        Greeting(
+            name = "Android",
+            modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
+        )
+        Spacer(Modifier.height(40.dp))
+        PeopleCounter()
+    }
+}
+
+@Composable
+fun PeopleCounter( modifier: Modifier = Modifier) {
+    var count = 0
+    Column(
+        modifier = Modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "$count", fontSize = 60.sp)
+        Text(text = "people passed")
+        Spacer(modifier = Modifier.height(40.dp))
+        Button(onClick = { }) {
+            Text("Click")
+        }
+    }
 }
 
 
