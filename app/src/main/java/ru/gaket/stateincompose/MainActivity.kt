@@ -2,6 +2,9 @@
 
 package ru.gaket.stateincompose
 
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import android.os.Bundle
 import android.view.Display.Mode
 import android.widget.Toast
@@ -150,10 +153,13 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun LoginForm(onLogin: () -> Unit) {
     Column() {
+        var input by remember { mutableStateOf("") }
+        val emailValidator = BasicEmailValidator()
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = "",
-            onValueChange = {},
+            value = input,
+            onValueChange = { input = it },
+            isError = !emailValidator.validate(input),
             label = { Text(text = "Email") },
             placeholder = { Text(text = "Type your email") }
         )
@@ -163,3 +169,8 @@ fun LoginForm(onLogin: () -> Unit) {
     }
 }
 
+class BasicEmailValidator {
+    fun validate(email: String): Boolean {
+        return email.contains("@")
+    }
+}
