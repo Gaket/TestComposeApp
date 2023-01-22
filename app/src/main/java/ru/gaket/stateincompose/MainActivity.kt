@@ -4,11 +4,7 @@ package ru.gaket.stateincompose
 
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import android.os.Bundle
-import android.view.Display.Mode
-import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
 import androidx.activity.compose.setContent
@@ -17,7 +13,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +20,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.gaket.stateincompose.ui.theme.StateInComposeTheme
 import java.util.Stack
 
@@ -128,20 +125,22 @@ fun PeopleCounter(modifier: Modifier = Modifier) {
 @Composable
 fun DefaultPreview() {
     StateInComposeTheme {
-        LoginScreen {
-        }
+//        LoginScreen {
+//        }
     }
 }
 
 @Composable
-fun LoginScreen(onLogin: () -> Unit) {
+fun LoginScreen(onLogin: () -> Unit, loginViewModel: LoginViewModel = viewModel()) {
+    val uiState by loginViewModel.uiState.collectAsStateWithLifecycle()
+
     Column(modifier = Modifier) {
         Greeting(
             name = "Android",
             modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
         )
         Spacer(Modifier.height(16.dp))
-        LoginForm(onLogin)
+        LoginForm(onLogin,  {loginViewModel.onEmailInputChanged(it)}, loginViewModel.uiState.value)
     }
 }
 
@@ -151,15 +150,13 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun LoginForm(onLogin: () -> Unit) {
+fun LoginForm(onLogin: () -> Unit, onInputChange: (String) -> Unit, inputString: LoginUiModel) {
     Column() {
-        var input by remember { mutableStateOf("") }
-        val emailValidator = BasicEmailValidator()
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = input,
-            onValueChange = { input = it },
-            isError = !emailValidator.validate(input),
+            value = inputString.input,
+            onValueChange = onInputChange,
+            isError = inputString.isError,
             label = { Text(text = "Email") },
             placeholder = { Text(text = "Type your email") }
         )
@@ -169,8 +166,3 @@ fun LoginForm(onLogin: () -> Unit) {
     }
 }
 
-class BasicEmailValidator {
-    fun validate(email: String): Boolean {
-        return email.contains("@")
-    }
-}
